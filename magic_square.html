@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ריבוע הקסם ✨</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Heebo', Arial, sans-serif;
+      background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+      min-height: 100vh;
+      color: #fff;
+      overflow-x: hidden;
+    }
+
+    /* ── Stars ── */
+    #stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--dur, 2s) infinite alternate;
+      animation-delay: var(--delay, 0s);
+    }
+    @keyframes twinkle {
+      from { opacity: .15; transform: scale(1); }
+      to   { opacity: 1;   transform: scale(1.6); }
+    }
+
+    /* ── Layout ── */
+    #app {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 20px 16px 40px;
+    }
+
+    /* ════════════════════════════════════════════
+       WELCOME SCREEN
+    ════════════════════════════════════════════ */
+    #welcome { text-align: center; padding: 40px 0; }
+
+    .main-title {
+      font-size: clamp(2.2rem, 6vw, 3.6rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #ffd700, #ff8c00, #ffd700);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .welcome-sub {
+      font-size: 1.1rem;
+      color: #b0aeff;
+      margin-bottom: 48px;
+    }
+
+    .size-cards {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .size-card {
+      background: linear-gradient(145deg, rgba(102,126,234,.25), rgba(118,75,162,.35));
+      border: 2px solid rgba(255,255,255,.2);
+      border-radius: 24px;
+      padding: 32px 40px;
+      cursor: pointer;
+      transition: transform .25s, box-shadow .25s, border-color .25s;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      text-align: center;
+      min-width: 160px;
+    }
+    .size-card:hover {
+      transform: translateY(-6px) scale(1.04);
+      box-shadow: 0 14px 40px rgba(102,126,234,.55);
+      border-color: gold;
+    }
+    .size-card .card-num {
+      display: block;
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: gold;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .size-card .card-sum {
+      font-size: .9rem;
+      color: #c0c0ff;
+    }
+    .size-card .card-method {
+      margin-top: 10px;
+      font-size: .8rem;
+      color: #a0a0d0;
+      font-style: italic;
+    }
+
+    /* ════════════════════════════════════════════
+       GAME SCREEN
+    ════════════════════════════════════════════ */
+    #game { display: none; }
+
+    .game-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+    .back-btn {
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 12px;
+      padding: 8px 18px;
+      color: #fff;
+      font-family: inherit;
+      font-size: .95rem;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .back-btn:hover { background: rgba(255,255,255,.2); }
+
+    .header-title { font-size: 1.4rem; font-weight: 700; }
+
+    .magic-pill {
+      background: linear-gradient(135deg, rgba(255,215,0,.15), rgba(255,140,0,.15));
+      border: 2px solid gold;
+      border-radius: 14px;
+      padding: 8px 20px;
+      text-align: center;
+    }
+    .magic-pill .pill-label { font-size: .75rem; color: #c0c0ff; }
+    .magic-pill .pill-val { font-size: 1.7rem; font-weight: 900; color: gold; line-height: 1.2; }
+
+    /* ── Instructions box ── */
+    .inst-box {
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 16px;
+      padding: 14px 18px;
+      margin-bottom: 22px;
+    }
+    .inst-toggle {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 1rem;
+      user-select: none;
+    }
+    .inst-toggle .arrow { transition: transform .25s; }
+    .inst-toggle.open .arrow { transform: rotate(180deg); }
+
+    .inst-body { margin-top: 14px; line-height: 1.9; }
+    .step-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+    .step-badge {
+      flex-shrink: 0;
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: gold;
+      color: #1a1a2e;
+      font-weight: 900;
+      font-size: .85rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .step-text { color: #d0d0ff; font-size: .93rem; }
+    .step-text strong { color: #fff; }
+
+    /* ── Grid area ── */
+    .game-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .grid-wrap { display: inline-block; }
+
+    .grid-rows { display: flex; flex-direction: column; gap: 5px; }
+
+    .grid-row { display: flex; gap: 5px; align-items: center; }
+
+    .grid-cell {
+      width: var(--cell-size, 65px);
+      height: var(--cell-size, 65px);
+      border: 2.5px solid rgba(255,255,255,.25);
+      border-radius: 12px;
+      background: rgba(255,255,255,.07);
+      color: #fff;
+      font-family: inherit;
+      font-size: clamp(1rem, 3.5vw, 1.5rem);
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: border-color .2s, background .2s, box-shadow .2s, color .2s;
+      /* hide number spinners */
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+    .grid-cell::-webkit-outer-spin-button,
+    .grid-cell::-webkit-inner-spin-button { display: none; }
+    .grid-cell:focus {
+      border-color: #818cf8;
+      background: rgba(129,140,248,.18);
+      box-shadow: 0 0 0 3px rgba(129,140,248,.3);
+    }
+    .grid-cell.state-correct {
+      border-color: #34d399;
+      background: rgba(52,211,153,.14);
+      color: #6ee7b7;
+    }
+    .grid-cell.state-wrong {
+      border-color: #f87171;
+      background: rgba(248,113,113,.14);
+      color: #fca5a5;
+      animation: shake .3s ease;
+    }
+    .grid-cell.state-hint {
+      border-color: gold;
+      background: rgba(255,215,0,.18);
+      box-shadow: 0 0 0 3px rgba(255,215,0,.35);
+      animation: pulse-hint 1s ease-in-out infinite;
+    }
+    .grid-cell.diagonal-mark {
+      background: rgba(255,215,0,.07);
+    }
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+    @keyframes pulse-hint {
+      0%,100% { box-shadow: 0 0 0 3px rgba(255,215,0,.35); }
+      50%      { box-shadow: 0 0 0 6px rgba(255,215,0,.6); }
+    }
+
+    .row-sum {
+      width: 48px;
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 4px 6px;
+      border-radius: 8px;
+      transition: all .3s;
+    }
+    .col-sums-row {
+      display: flex;
+      gap: 5px;
+      padding-right: 0;
+    }
+    .col-sum {
+      width: var(--cell-size, 65px);
+      text-align: center;
+      font-size: 1rem;
+      font-weight: 700;
+      padding: 4px 6px;
+      border-radius: 8px;
+      transition: all .3s;
+    }
+    .col-sums-spacer { width: 53px; }
+
+    .diag-sums-row {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 2px;
+      margin-top: 4px;
+    }
+    .diag-sum {
+      font-size: .9rem;
+      font-weight: 700;
+      padding: 3px 10px;
+      border-radius: 8px;
+      transition: all .3s;
+    }
+
+    /* sum colour states */
+    .s-ok    { color: #34d399; background: rgba(52,211,153,.1); }
+    .s-over  { color: #f87171; background: rgba(248,113,113,.1); }
+    .s-part  { color: #94a3b8; background: rgba(148,163,184,.07); }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      height: 7px;
+      background: rgba(255,255,255,.1);
+      border-radius: 4px;
+      margin: 12px 0;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 4px;
+      background: linear-gradient(90deg, #818cf8, gold);
+      transition: width .5s ease;
+      width: 0%;
+    }
+
+    /* ── Hint message ── */
+    .hint-msg {
+      display: none;
+      background: rgba(255,215,0,.08);
+      border: 2px solid gold;
+      border-radius: 14px;
+      padding: 12px 18px;
+      text-align: center;
+      font-size: .95rem;
+      line-height: 1.6;
+      animation: fadeSlide .3s ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Controls ── */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 18px;
+    }
+    .ctrl-btn {
+      border: none;
+      border-radius: 14px;
+      padding: 11px 22px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform .18s, filter .18s;
+    }
+    .ctrl-btn:hover { transform: translateY(-2px); filter: brightness(1.12); }
+    .ctrl-btn:active { transform: translateY(0); }
+
+    .btn-hint  { background: linear-gradient(135deg, #f59e0b, #fde68a); color: #1a1a00; }
+    .btn-demo  { background: linear-gradient(135deg, #8b5cf6, #c4b5fd); color: #fff; }
+    .btn-check { background: linear-gradient(135deg, #10b981, #6ee7b7); color: #fff; }
+    .btn-reset { background: linear-gradient(135deg, #ef4444, #fca5a5); color: #fff; }
+    .btn-solve { background: linear-gradient(135deg, #3b82f6, #93c5fd); color: #fff; }
+
+    /* ── Success overlay ── */
+    #success-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.82);
+      z-index: 900;
+      align-items: center;
+      justify-content: center;
+    }
+    #success-overlay.show { display: flex; }
+    .success-box {
+      background: linear-gradient(145deg, #1a1a3e, #302b63);
+      border: 3px solid gold;
+      border-radius: 28px;
+      padding: 50px 40px;
+      text-align: center;
+      max-width: 420px;
+      width: 90%;
+      animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes popIn {
+      from { transform: scale(.6); opacity: 0; }
+      to   { transform: scale(1);  opacity: 1; }
+    }
+    .success-icon { font-size: 4rem; margin-bottom: 14px; }
+    .success-title { font-size: 2rem; font-weight: 900; color: gold; margin-bottom: 10px; }
+    .success-sub { color: #c0c0ff; font-size: 1.1rem; margin-bottom: 28px; }
+    .success-play-btn {
+      background: gold; color: #1a1a00;
+      border: none; border-radius: 14px;
+      padding: 14px 32px; font-size: 1.1rem;
+      font-family: inherit; font-weight: 900;
+      cursor: pointer; transition: filter .2s;
+    }
+    .success-play-btn:hover { filter: brightness(1.1); }
+
+    /* ── Confetti ── */
+    .confetti {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 1000;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-60px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(800deg); opacity: 0; }
+    }
+
+    /* ── Animation overlay msg ── */
+    #demo-msg {
+      display: none;
+      text-align: center;
+      font-size: .9rem;
+      color: #c4b5fd;
+      margin-top: 6px;
+      min-height: 24px;
+    }
+
+    @media (max-width: 500px) {
+      :root { --cell-size: 50px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div id="app">
+
+  <!-- ════ WELCOME ════ -->
+  <div id="welcome">
+    <h1 class="main-title">✨ ריבוע הקסם ✨</h1>
+    <p class="welcome-sub">בחר את גודל הריבוע שתרצה לבנות ותתאמן על השיטה</p>
+
+    <div class="size-cards">
+      <button class="size-card" onclick="startGame(3)">
+        <span class="card-num">3×3</span>
+        <span class="card-sum">סכום קסם: 15</span>
+        <span class="card-method">שיטת הסיאמים</span>
+      </button>
+      <button class="size-card" onclick="startGame(4)">
+        <span class="card-num">4×4</span>
+        <span class="card-sum">סכום קסם: 34</span>
+        <span class="card-method">שיטת האלכסונים</span>
+      </button>
+      <button class="size-card" onclick="startGame(5)">
+        <span class="card-num">5×5</span>
+        <span class="card-sum">סכום קסם: 65</span>
+        <span class="card-method">שיטת הסיאמים</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- ════ GAME ════ -->
+  <div id="game">
+
+    <div class="game-header">
+      <button class="back-btn" onclick="goBack()">← חזור</button>
+      <span class="header-title" id="header-title"></span>
+      <div class="magic-pill">
+        <div class="pill-label">סכום הקסם</div>
+        <div class="pill-val" id="pill-val"></div>
+      </div>
+    </div>
+
+    <!-- Instructions -->
+    <div class="inst-box">
+      <div class="inst-toggle" id="inst-toggle" onclick="toggleInst()">
+        <span>📚 כיצד לבנות את ריבוע הקסם?</span>
+        <span class="arrow">▼</span>
+      </div>
+      <div class="inst-body" id="inst-body"></div>
+    </div>
+
+    <!-- Grid -->
+    <div class="game-area">
+      <div class="grid-wrap">
+        <div class="grid-rows" id="grid-rows" dir="ltr"></div>
+        <div class="col-sums-row" id="col-sums-row" dir="ltr" style="margin-top:5px;"></div>
+        <div class="diag-sums-row" id="diag-sums-row"></div>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap"><div class="progress-fill" id="prog"></div></div>
+
+    <!-- Hint message -->
+    <div class="hint-msg" id="hint-msg"></div>
+
+    <!-- Demo step description -->
+    <div id="demo-msg"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="ctrl-btn btn-hint"  onclick="doHint()">💡 רמז</button>
+      <button class="ctrl-btn btn-demo"  onclick="doDemo()">▶️ הדגמה</button>
+      <button class="ctrl-btn btn-check" onclick="doCheck()">✅ בדוק</button>
+      <button class="ctrl-btn btn-reset" onclick="doReset()">🔄 איפוס</button>
+      <button class="ctrl-btn btn-solve" onclick="doSolve()">🔮 פתרון</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- SUCCESS overlay -->
+<div id="success-overlay">
+  <div class="success-box">
+    <div class="success-icon">🎉</div>
+    <div class="success-title">כל הכבוד!</div>
+    <div class="success-sub" id="success-sub"></div>
+    <button class="success-play-btn" onclick="closeSuccess()">משחק חדש 🚀</button>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════
+   STARS BACKGROUND
+══════════════════════════════════════════════════ */
+(function buildStars() {
+  const c = document.getElementById('stars');
+  for (let i = 0; i < 120; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const sz = 1 + Math.random() * 2.5;
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      top:${Math.random()*100}%;
+      width:${sz}px; height:${sz}px;
+      --dur:${1.4 + Math.random()*2}s;
+      --delay:${Math.random()*4}s;
+    `;
+    c.appendChild(s);
+  }
+})();
+
+/* ═══════════════════════════════════════════════════
+   STATE
+══════════════════════════════════════════════════ */
+let N = 0;
+let solution = [];   // 2-D array of correct values
+let steps    = [];   // ordered placement steps {row,col,num,reason}
+let hintCell = null; // {row,col} currently highlighted
+let demoRunning = false;
+let demoAbort   = false;
+
+/* ═══════════════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════════════ */
+const magicSum = n => n * (n * n + 1) / 2;
+
+function cellEl(r, c)  { return document.getElementById(`c${r}_${c}`); }
+function getCellVal(r, c) { return parseInt(cellEl(r, c).value) || 0; }
+
+function setCellSize() {
+  const sz = N === 3 ? 78 : N === 4 ? 70 : 60;
+  document.documentElement.style.setProperty('--cell-size', sz + 'px');
+}
+
+/* ═══════════════════════════════════════════════════
+   SOLUTION GENERATORS
+══════════════════════════════════════════════════ */
+
+/* Siamese method – for odd N (3,5) */
+function solveSiamese(n) {
+  const grid = Array.from({length:n}, () => Array(n).fill(0));
+  const stps = [];
+  let r = 0, c = Math.floor(n / 2);
+  let nextReason = `מתחילים עם 1 באמצע השורה העליונה`;
+
+  for (let num = 1; num <= n*n; num++) {
+    grid[r][c] = num;
+    stps.push({ row: r, col: c, num, reason: nextReason });
+
+    const nr = (r - 1 + n) % n;
+    const nc = (c + 1) % n;
+
+    if (num < n*n) {
+      if (grid[nr][nc] !== 0) {
+        /* occupied → go down */
+        nextReason = `התא האלכסוני (למעלה-ימינה) תפוס – זזים שורה אחת <strong>למטה</strong>`;
+        r = (r + 1) % n;
+      } else {
+        /* move diagonally */
+        const wrapU = r === 0;
+        const wrapR = c === n - 1;
+        if (wrapU && wrapR)
+          nextReason = `יצאנו מלמעלה ומהצד הימני – עוברים לפינה <strong>השמאלית התחתונה</strong>`;
+        else if (wrapU)
+          nextReason = `עלינו מעל הריבוע – עוברים לשורה <strong>התחתונה</strong>`;
+        else if (wrapR)
+          nextReason = `יצאנו מהצד הימני – עוברים לעמודה <strong>השמאלית</strong>`;
+        else
+          nextReason = `צעד אלכסוני: שורה אחת <strong>למעלה</strong>, עמודה אחת <strong>ימינה</strong>`;
+        r = nr; c = nc;
+      }
+    }
+  }
+  return { grid, stps };
+}
+
+/* Diagonal-exchange method – for 4×4 */
+function solve4x4() {
+  const isDiag = (i, j) => i === j || i + j === 3;
+  const grid = [];
+  const stps = [];
+  /* Build in reading order so steps match how kids write 1-16 first */
+  for (let i = 0; i < 4; i++) {
+    grid.push([]);
+    for (let j = 0; j < 4; j++) {
+      const init = i * 4 + j + 1;
+      const final = isDiag(i, j) ? init : 17 - init;
+      grid[i].push(final);
+      const reason = isDiag(i, j)
+        ? `המספר ${init} נמצא על <strong>האלכסון</strong> – נשאר במקומו`
+        : `המספר ${init} אינו על האלכסון – מוחלף ב־<strong>17 − ${init} = ${final}</strong>`;
+      stps.push({ row: i, col: j, num: final, reason, isDiag: isDiag(i, j) });
+    }
+  }
+  return { grid, stps };
+}
+
+/* ═══════════════════════════════════════════════════
+   START / BACK
+══════════════════════════════════════════════════ */
+function startGame(size) {
+  N = size;
+  demoAbort = true; /* stop any running demo */
+
+  setCellSize();
+
+  const res = N === 4 ? solve4x4() : solveSiamese(N);
+  solution = res.grid;
+  steps    = res.stps;
+
+  document.getElementById('welcome').style.display = 'none';
+  document.getElementById('game').style.display    = 'block';
+  document.getElementById('header-title').textContent = `ריבוע ${N}×${N}`;
+  document.getElementById('pill-val').textContent   = magicSum(N);
+
+  buildInstructions();
+  renderGrid();
+}
+
+function goBack() {
+  demoAbort = true;
+  document.getElementById('game').style.display    = 'none';
+  document.getElementById('welcome').style.display = 'block';
+  hideHintMsg();
+  document.getElementById('demo-msg').style.display = 'none';
+}
+
+/* ═══════════════════════════════════════════════════
+   INSTRUCTIONS
+══════════════════════════════════════════════════ */
+function buildInstructions() {
+  const body = document.getElementById('inst-body');
+  const toggle = document.getElementById('inst-toggle');
+  toggle.classList.add('open');
+
+  const row = (n, html) =>
+    `<div class="step-row"><span class="step-badge">${n}</span><span class="step-text">${html}</span></div>`;
+
+  if (N !== 4) {
+    body.innerHTML =
+      `<p style="color:#b0aeff;margin-bottom:12px;font-size:.9rem;">שיטת הסיאמים (לריבועי אי-זוגי)</p>` +
+      row(1, `כתוב <strong>1</strong> באמצע השורה <strong>העליונה</strong>`) +
+      row(2, `כל מספר הבא ממוקם <strong>שורה למעלה ועמודה ימינה</strong> (אלכסון)`) +
+      row(3, `יצאת מלמעלה? → עבור לשורה <strong>התחתונה</strong> באותה עמודה`) +
+      row(4, `יצאת מהצד הימני? → עבור לעמודה <strong>השמאלית</strong> באותה שורה`) +
+      row(5, `התא האלכסוני תפוס? → רד <strong>שורה אחת למטה</strong> מהמיקום הקודם`);
+  } else {
+    body.innerHTML =
+      `<p style="color:#b0aeff;margin-bottom:12px;font-size:.9rem;">שיטת האלכסונים לריבוע 4×4</p>` +
+      row(1, `כתוב את המספרים <strong>1 עד 16</strong> בסדר: משמאל לימין, מלמעלה למטה`) +
+      row(2, `סמן את שני <strong>האלכסונים הראשיים</strong> (↘ ו-↙)`) +
+      row(3, `מספרים <strong>על האלכסון</strong> – נשארים במקומם`) +
+      row(4, `מספרים <strong>שאינם על האלכסון</strong> – מוחלפים ב-<strong>17 פחות המספר</strong>`) +
+      `<div style="margin-top:10px;padding:8px 12px;background:rgba(255,215,0,.08);border-radius:10px;font-size:.85rem;color:#e0e0ff;">
+        לדוגמה: 2→15, 3→14, 5→12, 8→9 ועוד...
+      </div>`;
+  }
+}
+
+function toggleInst() {
+  const body   = document.getElementById('inst-body');
+  const toggle = document.getElementById('inst-toggle');
+  const open   = toggle.classList.toggle('open');
+  body.style.display = open ? '' : 'none';
+}
+
+/* ═══════════════════════════════════════════════════
+   RENDER GRID
+══════════════════════════════════════════════════ */
+function renderGrid() {
+  hintCell = null;
+  hideHintMsg();
+
+  const rowsEl    = document.getElementById('grid-rows');
+  const colSumsEl = document.getElementById('col-sums-row');
+  const diagSumsEl = document.getElementById('diag-sums-row');
+
+  rowsEl.innerHTML = '';
+  colSumsEl.innerHTML = '';
+  diagSumsEl.innerHTML = '';
+
+  /* --- Grid rows --- */
+  for (let i = 0; i < N; i++) {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'grid-row';
+
+    for (let j = 0; j < N; j++) {
+      const inp = document.createElement('input');
+      inp.type = 'number';
+      inp.min  = 1;
+      inp.max  = N * N;
+      inp.className = 'grid-cell';
+      inp.id = `c${i}_${j}`;
+      inp.dataset.r = i;
+      inp.dataset.c = j;
+
+      /* mark diagonal cells visually for 4×4 */
+      if (N === 4 && (i === j || i + j === 3)) inp.classList.add('diagonal-mark');
+
+      inp.addEventListener('input',   onInput);
+      inp.addEventListener('keydown', onKeydown);
+      rowDiv.appendChild(inp);
+    }
+
+    /* row sum badge */
+    const rs = document.createElement('div');
+    rs.className = 'row-sum s-part';
+    rs.id = `rs${i}`;
+    rs.textContent = '0';
+    rowDiv.appendChild(rs);
+
+    rowsEl.appendChild(rowDiv);
+  }
+
+  /* --- Column sums --- */
+  for (let j = 0; j < N; j++) {
+    const cs = document.createElement('div');
+    cs.className = 'col-sum s-part';
+    cs.id = `cs${j}`;
+    cs.textContent = '0';
+    colSumsEl.appendChild(cs);
+  }
+  const sp = document.createElement('div');
+  sp.className = 'col-sums-spacer';
+  colSumsEl.appendChild(sp);
+
+  /* --- Diagonal sums --- */
+  const d1 = document.createElement('span');
+  d1.className = 'diag-sum s-part';
+  d1.id = 'ds1';
+  d1.textContent = '↘ 0';
+
+  const d2 = document.createElement('span');
+  d2.className = 'diag-sum s-part';
+  d2.id = 'ds2';
+  d2.textContent = '0 ↙';
+
+  diagSumsEl.appendChild(d2); /* right side (RTL) */
+  diagSumsEl.appendChild(d1); /* left  side */
+
+  updateSums();
+}
+
+/* ═══════════════════════════════════════════════════
+   INPUT / KEYBOARD HANDLERS
+══════════════════════════════════════════════════ */
+function onInput(e) {
+  const inp = e.target;
+  /* strip non-numeric */
+  inp.value = inp.value.replace(/[^0-9]/g, '');
+
+  clearHint();
+  inp.classList.remove('state-correct','state-wrong','state-hint');
+  updateSums();
+  autoDetectSuccess();
+}
+
+function onKeydown(e) {
+  const r = +e.target.dataset.r;
+  const c = +e.target.dataset.c;
+  let nr = r, nc = c;
+
+  if      (e.key === 'ArrowUp')    { nr = Math.max(0, r-1); }
+  else if (e.key === 'ArrowDown')  { nr = Math.min(N-1, r+1); }
+  else if (e.key === 'ArrowLeft')  { nc = Math.min(N-1, c+1); }
+  else if (e.key === 'ArrowRight') { nc = Math.max(0, c-1); }
+  else if (e.key === 'Enter' || e.key === 'Tab') {
+    e.preventDefault();
+    nc = c + 1;
+    if (nc >= N) { nc = 0; nr = r + 1; }
+    if (nr >= N) { nr = 0; }
+  } else return;
+
+  if (nr !== r || nc !== c) cellEl(nr, nc)?.focus();
+}
+
+/* ═══════════════════════════════════════════════════
+   SUMS
+══════════════════════════════════════════════════ */
+function updateSums() {
+  const ms = magicSum(N);
+
+  /* rows */
+  for (let i = 0; i < N; i++) {
+    let s = 0;
+    for (let j = 0; j < N; j++) s += getCellVal(i, j);
+    const el = document.getElementById(`rs${i}`);
+    el.textContent = s;
+    el.className   = 'row-sum ' + sumClass(s, ms);
+  }
+
+  /* cols */
+  for (let j = 0; j < N; j++) {
+    let s = 0;
+    for (let i = 0; i < N; i++) s += getCellVal(i, j);
+    const el = document.getElementById(`cs${j}`);
+    el.textContent = s;
+    el.className   = 'col-sum ' + sumClass(s, ms);
+  }
+
+  /* diags */
+  let d1 = 0, d2 = 0;
+  for (let i = 0; i < N; i++) { d1 += getCellVal(i, i); d2 += getCellVal(i, N-1-i); }
+  const el1 = document.getElementById('ds1');
+  const el2 = document.getElementById('ds2');
+  el1.textContent = `↘ ${d1}`;  el1.className = 'diag-sum ' + sumClass(d1, ms);
+  el2.textContent = `${d2} ↙`;  el2.className = 'diag-sum ' + sumClass(d2, ms);
+
+  /* progress */
+  let filled = 0;
+  for (let i = 0; i < N; i++) for (let j = 0; j < N; j++) if (getCellVal(i,j) > 0) filled++;
+  document.getElementById('prog').style.width = ((filled / (N*N))*100) + '%';
+}
+
+function sumClass(s, ms) {
+  if (s === 0)  return 's-part';
+  if (s === ms) return 's-ok';
+  if (s > ms)   return 's-over';
+  return 's-part';
+}
+
+/* ═══════════════════════════════════════════════════
+   VALIDATION
+══════════════════════════════════════════════════ */
+function isValidMagicSquare() {
+  const ms = magicSum(N);
+  const seen = new Set();
+
+  for (let i = 0; i < N; i++)
+    for (let j = 0; j < N; j++) {
+      const v = getCellVal(i, j);
+      if (!v || v < 1 || v > N*N || seen.has(v)) return false;
+      seen.add(v);
+    }
+  if (seen.size !== N*N) return false;
+
+  for (let i = 0; i < N; i++) {
+    let rs = 0, cs = 0;
+    for (let j = 0; j < N; j++) { rs += getCellVal(i,j); cs += getCellVal(j,i); }
+    if (rs !== ms || cs !== ms) return false;
+  }
+
+  let d1 = 0, d2 = 0;
+  for (let i = 0; i < N; i++) { d1 += getCellVal(i,i); d2 += getCellVal(i,N-1-i); }
+  return d1 === ms && d2 === ms;
+}
+
+function autoDetectSuccess() {
+  if (isValidMagicSquare()) setTimeout(showSuccess, 400);
+}
+
+/* ═══════════════════════════════════════════════════
+   HINT
+══════════════════════════════════════════════════ */
+function doHint() {
+  clearHint();
+
+  /* find first step where current value ≠ correct */
+  const target = steps.find(s => getCellVal(s.row, s.col) !== s.num);
+
+  if (!target) {
+    showHintMsg('🎉 כל המספרים במקומם הנכון! לחץ "בדוק" לאימות.');
+    return;
+  }
+
+  hintCell = { row: target.row, col: target.col };
+  const inp = cellEl(target.row, target.col);
+  inp.classList.add('state-hint');
+  inp.focus();
+
+  const colLabel = target.col + 1;
+  const rowLabel = target.row + 1;
+  showHintMsg(
+    `💡 הנח את המספר <strong>${target.num}</strong> ` +
+    `בשורה ${rowLabel}, עמודה ${colLabel}<br>` +
+    `<span style="font-size:.85rem;color:#d4b8ff;">${target.reason}</span>`
+  );
+}
+
+function clearHint() {
+  if (hintCell) {
+    cellEl(hintCell.row, hintCell.col)?.classList.remove('state-hint');
+    hintCell = null;
+  }
+  hideHintMsg();
+}
+
+function showHintMsg(html) {
+  const el = document.getElementById('hint-msg');
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+function hideHintMsg() {
+  const el = document.getElementById('hint-msg');
+  el.style.display = 'none';
+}
+
+/* ═══════════════════════════════════════════════════
+   CHECK
+══════════════════════════════════════════════════ */
+function doCheck() {
+  clearHint();
+  let anyWrong = false;
+  let anyEmpty = false;
+
+  for (let i = 0; i < N; i++)
+    for (let j = 0; j < N; j++) {
+      const inp = cellEl(i, j);
+      const v   = getCellVal(i, j);
+      inp.classList.remove('state-correct','state-wrong','state-hint');
+      if (!v) { anyEmpty = true; continue; }
+      if (v === solution[i][j]) {
+        inp.classList.add('state-correct');
+      } else {
+        inp.classList.add('state-wrong');
+        anyWrong = true;
+      }
+    }
+
+  if (!anyWrong && !anyEmpty) {
+    showSuccess();
+  } else if (anyWrong) {
+    showHintMsg('❌ יש שגיאות – התאים האדומים אינם נכונים. נסה שוב או לחץ "רמז".');
+  } else {
+    showHintMsg('⚠️ חלק מהתאים עדיין ריקים. המשך למלא את הריבוע!');
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   DEMO (animated step-by-step)
+══════════════════════════════════════════════════ */
+async function doDemo() {
+  if (demoRunning) { demoAbort = true; return; }
+
+  doReset(true);          /* clears grid; also sets demoAbort=true */
+  demoAbort   = false;    /* re-enable after reset */
+  demoRunning = true;
+
+  const demoMsgEl = document.getElementById('demo-msg');
+  demoMsgEl.style.display = 'block';
+
+  const delay = ms => new Promise(res => setTimeout(res, ms));
+
+  for (const step of steps) {
+    if (demoAbort) break;
+
+    demoMsgEl.innerHTML =
+      `<strong style="color:gold">מספר ${step.num}</strong>: ${step.reason}`;
+
+    const inp = cellEl(step.row, step.col);
+    inp.classList.add('state-hint');
+    await delay(500);
+    if (demoAbort) break;
+
+    inp.value = step.num;
+    inp.classList.remove('state-hint');
+    inp.classList.add('state-correct');
+    updateSums();
+    await delay(350);
+  }
+
+  demoMsgEl.style.display = 'none';
+  demoRunning = false;
+
+  if (!demoAbort && isValidMagicSquare()) setTimeout(showSuccess, 500);
+}
+
+/* ═══════════════════════════════════════════════════
+   RESET / SOLVE
+══════════════════════════════════════════════════ */
+function doReset(silent) {
+  demoAbort = true;
+  clearHint();
+  for (let i = 0; i < N; i++)
+    for (let j = 0; j < N; j++) {
+      const inp = cellEl(i, j);
+      inp.value = '';
+      inp.classList.remove('state-correct','state-wrong','state-hint');
+    }
+  updateSums();
+  if (!silent) hideHintMsg();
+  document.getElementById('demo-msg').style.display = 'none';
+}
+
+function doSolve() {
+  demoAbort = true;
+  clearHint();
+  for (let i = 0; i < N; i++)
+    for (let j = 0; j < N; j++) {
+      const inp = cellEl(i, j);
+      inp.value = solution[i][j];
+      inp.classList.remove('state-wrong','state-hint');
+      inp.classList.add('state-correct');
+    }
+  updateSums();
+  hideHintMsg();
+}
+
+/* ═══════════════════════════════════════════════════
+   SUCCESS
+══════════════════════════════════════════════════ */
+function showSuccess() {
+  const msgs = [
+    `בנית ריבוע קסם ${N}×${N} מושלם! אתה אלוף! 🏆`,
+    `מדהים! כל השורות, העמודות והאלכסונים שווים ל-${magicSum(N)}! 🌟`,
+    `ריבוע הקסם שלך מושלם! כישרון אמיתי! ✨`
+  ];
+  document.getElementById('success-sub').textContent =
+    msgs[Math.floor(Math.random() * msgs.length)];
+  document.getElementById('success-overlay').classList.add('show');
+  launchConfetti();
+}
+
+function closeSuccess() {
+  document.getElementById('success-overlay').classList.remove('show');
+  goBack();
+}
+
+/* ═══════════════════════════════════════════════════
+   CONFETTI
+══════════════════════════════════════════════════ */
+function launchConfetti() {
+  const colors = ['#ffd700','#ff6b6b','#4ecdc4','#a8e063','#f093fb','#818cf8','#fb923c'];
+  for (let i = 0; i < 90; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.className = 'confetti';
+      const sz = 6 + Math.random() * 10;
+      p.style.cssText = `
+        left:${Math.random()*100}vw;
+        top:-20px;
+        width:${sz}px; height:${sz}px;
+        background:${colors[i % colors.length]};
+        animation-duration:${1.6+Math.random()*2}s;
+        animation-delay:${Math.random()*0.6}s;
+        border-radius:${Math.random()>.5?'50%':'3px'};
+      `;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 3200);
+    }, i * 28);
+  }
+}
+</script>
+</body>
+</html>
