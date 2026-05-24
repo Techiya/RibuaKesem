@@ -24,37 +24,25 @@
     }
     #app { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:20px 16px 40px; }
 
-    /* ── WELCOME ── */
-    #welcome { text-align:center; padding:40px 0; }
+    /* ── PAGE HEADER ── */
+    .page-header { text-align:center; padding:28px 0 18px; }
     .main-title {
       font-size:clamp(2.2rem,6vw,3.6rem); font-weight:900;
       background:linear-gradient(135deg,#ffd700,#ff8c00,#ffd700);
       -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-      background-clip:text; margin-bottom:12px; line-height:1.15;
+      background-clip:text; margin-bottom:16px; line-height:1.15;
     }
-    .welcome-sub { font-size:1.1rem; color:#b0aeff; margin-bottom:48px; }
-    .size-cards { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; }
-    .size-card {
-      background:linear-gradient(145deg,rgba(102,126,234,.25),rgba(118,75,162,.35));
-      border:2px solid rgba(255,255,255,.2); border-radius:24px;
-      padding:32px 40px; cursor:pointer;
-      transition:transform .25s,box-shadow .25s,border-color .25s;
-      color:#fff; font-family:inherit; font-size:1rem; text-align:center; min-width:160px;
+    .size-picker { display:inline-flex; align-items:center; gap:12px; margin-top:4px; }
+    .size-picker label { color:#b0aeff; font-size:.95rem; }
+    .size-picker select {
+      background:rgba(255,255,255,.1); border:1.5px solid rgba(255,255,255,.3);
+      border-radius:12px; color:#fff; font-family:inherit; font-size:1rem;
+      padding:8px 14px; cursor:pointer; outline:none;
+      transition:border-color .2s,background .2s;
+      -webkit-appearance:none; appearance:none;
     }
-    .size-card:hover { transform:translateY(-6px) scale(1.04); box-shadow:0 14px 40px rgba(102,126,234,.55); border-color:gold; }
-    .size-card .card-num { display:block; font-size:2.8rem; font-weight:900; color:gold; line-height:1; margin-bottom:8px; }
-    .size-card .card-method { font-size:.8rem; color:#a0a0d0; font-style:italic; }
-
-    /* ── GAME ── */
-    #game { display:none; }
-    .game-header { display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:18px; }
-    .back-btn {
-      background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.3);
-      border-radius:12px; padding:8px 18px; color:#fff; font-family:inherit;
-      font-size:.95rem; cursor:pointer; transition:background .2s;
-    }
-    .back-btn:hover { background:rgba(255,255,255,.2); }
-    .header-title { font-size:1.4rem; font-weight:700; }
+    .size-picker select:focus { border-color:gold; background:rgba(255,215,0,.1); }
+    .size-picker select option { background:#302b63; }
 
     /* ── Instructions ── */
     .inst-box { background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.18); border-radius:16px; padding:14px 18px; margin-bottom:22px; }
@@ -105,6 +93,7 @@
     }
     .c4-inp::-webkit-outer-spin-button, .c4-inp::-webkit-inner-spin-button { display:none; }
     .c4-inp::placeholder { color:rgba(255,255,255,.2); }
+    .c4-inp.demo-active { box-shadow:0 0 0 2px rgba(167,139,250,.85); border-radius:4px; }
     .c4-sel {
       font-size:.85rem; cursor:pointer; color:rgba(255,255,255,.25);
       transition:color .2s,text-shadow .2s; user-select:none; flex-shrink:0;
@@ -213,34 +202,19 @@
 <div id="stars"></div>
 <div id="app">
 
-  <!-- WELCOME -->
-  <div id="welcome">
+  <div class="page-header">
     <h1 class="main-title">✨ ריבוע הקסם ✨</h1>
-    <p class="welcome-sub">בחר את גודל הריבוע שתרצה לבנות ותתאמן על השיטה</p>
-    <div class="size-cards">
-      <button class="size-card" onclick="startGame(3)">
-        <span class="card-num">3×3</span>
-        <span class="card-method">שיטת הסיאמים</span>
-      </button>
-      <button class="size-card" onclick="startGame(4)">
-        <span class="card-num">4×4</span>
-        <span class="card-method">שיטת הפינה הנגדית</span>
-      </button>
-      <button class="size-card" onclick="startGame(5)">
-        <span class="card-num">5×5</span>
-        <span class="card-method">שיטת הסיאמים</span>
-      </button>
+    <div class="size-picker">
+      <label for="size-select">גודל הריבוע:</label>
+      <select id="size-select" onchange="startGame(+this.value)">
+        <option value="3">3×3 — שיטת הסיאמים</option>
+        <option value="4">4×4 — שיטת הפינה הנגדית</option>
+        <option value="5" selected>5×5 — שיטת הסיאמים</option>
+      </select>
     </div>
   </div>
 
-  <!-- GAME -->
   <div id="game">
-    <div class="game-header">
-      <button class="back-btn" onclick="goBack()">← חזור</button>
-      <span class="header-title" id="header-title"></span>
-      <div style="width:80px"></div>
-    </div>
-
     <div class="inst-box">
       <div class="inst-toggle open" id="inst-toggle" onclick="toggleInst()">
         <span>📚 כיצד לבנות את ריבוע הקסם?</span>
@@ -363,7 +337,7 @@ function solve4x4() {
   return {grid, stps};
 }
 
-/* ── Start / Back ── */
+/* ── Start ── */
 function startGame(size) {
   N = size; demoAbort = true; sumsVisible = false;
   setCellSize();
@@ -371,9 +345,7 @@ function startGame(size) {
   solution = res.grid; steps = res.stps;
   if (N===4) choices4x4 = Array.from({length:4}, () => Array(4).fill(null));
 
-  document.getElementById('welcome').style.display = 'none';
-  document.getElementById('game').style.display    = 'block';
-  document.getElementById('header-title').textContent = `ריבוע ${N}×${N}`;
+  document.getElementById('size-select').value = String(N);
 
   const sb = document.getElementById('btn-sums');
   sb.textContent = '📊 הצג סכומי שורות';
@@ -381,14 +353,6 @@ function startGame(size) {
 
   buildInstructions();
   renderGrid();
-}
-
-function goBack() {
-  demoAbort = true;
-  document.getElementById('game').style.display    = 'none';
-  document.getElementById('welcome').style.display = 'block';
-  hideHintMsg();
-  document.getElementById('demo-msg').style.display = 'none';
 }
 
 /* ── Instructions ── */
@@ -483,8 +447,7 @@ function make4Cell(i,j) {
 
   ['t','b'].forEach((s,idx) => {
     const row = document.createElement('div');
-    row.className = 'c4-row' + (idx?'  bot':'');
-    if (idx) row.classList.add('bot');
+    row.className = 'c4-row' + (idx?' bot':'');
 
     const inp = document.createElement('input');
     inp.type='number'; inp.min=1; inp.max=16;
@@ -531,12 +494,13 @@ function onKeydown(e) {
 }
 
 /* ── 4×4 selection ── */
-function selectChoice(i,j,slot) {
+function selectChoice(i, j, slot, silent=false) {
   choices4x4[i][j] = slot;
   ['t','b'].forEach(s => document.getElementById(`c${i}_${j}_${s}s`)?.classList.toggle('sel-active', s===slot));
   cellEl(i,j)?.classList.remove('state-correct','state-wrong','state-hint');
   if (hintChoiceEl) { hintChoiceEl.classList.remove('hint-choice'); hintChoiceEl=null; hideHintMsg(); }
-  updateDisplay(); autoDetectSuccess();
+  updateDisplay();
+  if (!silent) autoDetectSuccess();
 }
 
 /* ── Display / sums ── */
@@ -588,26 +552,49 @@ function autoDetectSuccess() { if(isValidMagicSquare()) setTimeout(showSuccess,4
 /* ── Hint ── */
 function doHint() {
   clearHint();
-  const target = steps.find(s => getCellVal(s.row,s.col) !== s.num);
-  if (!target) { showHintMsg('🎉 כל המספרים במקומם הנכון! לחץ "בדוק" לאימות.'); return; }
 
-  if (N===4) {
+  if (N === 4) {
+    // Phase 1: any top slot still empty?
+    for (let i=0;i<4;i++) for (let j=0;j<4;j++) {
+      const s = steps[i*4+j];
+      const v = parseInt(document.getElementById(`c${i}_${j}_t`)?.value)||0;
+      if (!v) {
+        showHintMsg(`💡 <strong>שלב 1</strong>: כתוב <strong>${s.initVal}</strong> בשדה העליון של שורה ${i+1}, עמודה ${j+1}`);
+        return;
+      }
+    }
+    // Phase 2: any bottom slot still empty? (check in reverse order)
+    for (let i=3;i>=0;i--) for (let j=3;j>=0;j--) {
+      const s = steps[i*4+j];
+      const secondVal = 17 - s.initVal;
+      const v = parseInt(document.getElementById(`c${i}_${j}_b`)?.value)||0;
+      if (!v) {
+        showHintMsg(`💡 <strong>שלב 2</strong>: כתוב <strong>${secondVal}</strong> בשדה התחתון של שורה ${i+1}, עמודה ${j+1}`);
+        return;
+      }
+    }
+    // Phase 3: find first cell with wrong/missing selection
+    const target = steps.find(s => getCellVal(s.row,s.col) !== s.num);
+    if (!target) { showHintMsg('🎉 כל המספרים במקומם! לחץ "בדוק" לאימות.'); return; }
     const slot = target.isDiag ? 't' : 'b';
     hintChoiceEl = document.getElementById(`c${target.row}_${target.col}_${slot}s`);
-    if(hintChoiceEl) hintChoiceEl.classList.add('hint-choice');
+    hintChoiceEl?.classList.add('hint-choice');
     showHintMsg(
-      `💡 ${target.reason}<br>` +
+      `💡 <strong>שלב 3</strong>: ${target.reason}<br>` +
       `<span style="font-size:.85rem;color:#d4b8ff;">שורה ${target.row+1}, עמודה ${target.col+1}</span>`
     );
-  } else {
-    hintCell = {row:target.row, col:target.col};
-    const inp = cellEl(target.row, target.col);
-    inp.classList.add('state-hint'); inp.focus();
-    showHintMsg(
-      `💡 הנח את המספר <strong>${target.num}</strong> בשורה ${target.row+1}, עמודה ${target.col+1}<br>` +
-      `<span style="font-size:.85rem;color:#d4b8ff;">${target.reason}</span>`
-    );
+    return;
   }
+
+  const target = steps.find(s => getCellVal(s.row,s.col) !== s.num);
+  if (!target) { showHintMsg('🎉 כל המספרים במקומם הנכון! לחץ "בדוק" לאימות.'); return; }
+  hintCell = {row:target.row, col:target.col};
+  const inp = cellEl(target.row, target.col);
+  inp.classList.add('state-hint'); inp.focus();
+  showHintMsg(
+    `💡 הנח את המספר <strong>${target.num}</strong> בשורה ${target.row+1}, עמודה ${target.col+1}<br>` +
+    `<span style="font-size:.85rem;color:#d4b8ff;">${target.reason}</span>`
+  );
 }
 
 function clearHint() {
@@ -654,24 +641,63 @@ async function doDemo() {
   demoEl.style.display='block';
   const delay=ms=>new Promise(r=>setTimeout(r,ms));
 
-  for(const step of steps){
-    if(demoAbort) break;
-    if(N===4){
-      const slot=step.isDiag?'t':'b';
-      const tInp=document.getElementById(`c${step.row}_${step.col}_t`);
-      const bInp=document.getElementById(`c${step.row}_${step.col}_b`);
-      const icon=document.getElementById(`c${step.row}_${step.col}_${slot}s`);
-      demoEl.innerHTML=`<strong style="color:gold">תא (${step.row+1},${step.col+1})</strong>: ${step.reason}`;
-      if(!tInp.value) tInp.value=step.initVal;
-      if(!bInp.value) bInp.value=17-step.initVal;
-      updateDisplay();
-      icon?.classList.add('hint-choice');
-      await delay(600); if(demoAbort) break;
-      icon?.classList.remove('hint-choice');
-      selectChoice(step.row,step.col,slot);
-      cellEl(step.row,step.col)?.classList.add('state-correct');
-      await delay(300);
-    } else {
+  if (N === 4) {
+    /* Phase 1 — fill top slots in reading order (top-left → bottom-right) */
+    for (let i=0;i<4;i++) {
+      for (let j=0;j<4;j++) {
+        if(demoAbort) break;
+        const s = steps[i*4+j];
+        const tInp = document.getElementById(`c${i}_${j}_t`);
+        demoEl.innerHTML = `<strong style="color:#a78bfa">שלב 1 – כתיבה מהפינה השמאלית העליונה</strong>: מספר ${s.initVal} → תא (${i+1},${j+1})`;
+        tInp.classList.add('demo-active');
+        await delay(380); if(demoAbort) break;
+        tInp.value = s.initVal;
+        tInp.classList.remove('demo-active');
+        updateDisplay();
+        await delay(220);
+      }
+      if(demoAbort) break;
+    }
+
+    /* Phase 2 — fill bottom slots in reverse order (bottom-right → top-left) */
+    for (let i=3;i>=0;i--) {
+      for (let j=3;j>=0;j--) {
+        if(demoAbort) break;
+        const s = steps[i*4+j];
+        const secondVal = 17 - s.initVal;
+        const bInp = document.getElementById(`c${i}_${j}_b`);
+        demoEl.innerHTML = `<strong style="color:#fb923c">שלב 2 – כתיבה מהפינה הימנית התחתונה</strong>: מספר ${secondVal} → תא (${i+1},${j+1})`;
+        bInp.classList.add('demo-active');
+        await delay(380); if(demoAbort) break;
+        bInp.value = secondVal;
+        bInp.classList.remove('demo-active');
+        updateDisplay();
+        await delay(220);
+      }
+      if(demoAbort) break;
+    }
+
+    /* Phase 3 — select the correct slot in each cell */
+    for (let i=0;i<4;i++) {
+      for (let j=0;j<4;j++) {
+        if(demoAbort) break;
+        const s = steps[i*4+j];
+        const slot = s.isDiag ? 't' : 'b';
+        const icon = document.getElementById(`c${i}_${j}_${slot}s`);
+        demoEl.innerHTML = `<strong style="color:gold">שלב 3 – בחירה</strong>: ${s.reason}`;
+        icon?.classList.add('hint-choice');
+        await delay(520); if(demoAbort) break;
+        icon?.classList.remove('hint-choice');
+        selectChoice(i, j, slot, true);
+        cellEl(i,j)?.classList.add('state-correct');
+        await delay(280);
+      }
+      if(demoAbort) break;
+    }
+
+  } else {
+    for(const step of steps){
+      if(demoAbort) break;
       demoEl.innerHTML=`<strong style="color:gold">מספר ${step.num}</strong>: ${step.reason}`;
       const inp=cellEl(step.row,step.col);
       inp.classList.add('state-hint');
@@ -681,6 +707,7 @@ async function doDemo() {
       updateDisplay(); await delay(350);
     }
   }
+
   demoEl.style.display='none'; demoRunning=false;
   if(!demoAbort&&isValidMagicSquare()) setTimeout(showSuccess,500);
 }
@@ -696,7 +723,7 @@ function doReset(silent) {
         const inp=document.getElementById(`c${i}_${j}_${s}`);
         const sel=document.getElementById(`c${i}_${j}_${s}s`);
         if(inp) inp.value='';
-        if(sel) sel.classList.remove('sel-active','hint-choice');
+        if(sel) sel.classList.remove('sel-active','hint-choice','demo-active');
       });
     }
   } else {
@@ -719,7 +746,7 @@ function doSolve() {
       if(tI) tI.value=step.initVal;
       if(bI) bI.value=17-step.initVal;
       const slot=step.isDiag?'t':'b';
-      selectChoice(step.row,step.col,slot);
+      selectChoice(step.row, step.col, slot, true);
       cellEl(step.row,step.col)?.classList.add('state-correct');
     }
   } else {
@@ -744,7 +771,6 @@ function showSuccess(){
 }
 function closeSuccess(){
   document.getElementById('success-overlay').classList.remove('show');
-  goBack();
 }
 
 /* ── Confetti ── */
@@ -759,6 +785,9 @@ function launchConfetti(){
     setTimeout(()=>p.remove(),3200);
   }, i*28);
 }
+
+/* ── Init ── */
+startGame(5);
 </script>
 </body>
 </html>
